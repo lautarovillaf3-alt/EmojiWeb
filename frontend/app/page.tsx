@@ -1,15 +1,26 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Emoji } from "./types/emoji";
 import EmojiCard from "./components/EmojiCard";
 
-async function getEmojis(): Promise<Emoji[]> {
-  const res = await fetch("http://localhost:5000/api/emojis", {
-    cache: "no-store",
-  });
-  return res.json();
-}
+export default function Home() {
+  const [emojis, setEmojis] = useState<Emoji[]>([]);
 
-export default async function Home() {
-  const emojis = await getEmojis();
+  useEffect(() => {
+    const fetchEmojis = async () => {
+      try {
+        const url = process.env.NEXT_PUBLIC_API_URL;
+        const res = await fetch(`${url}/api/emojis`);
+        const data = await res.json();
+        setEmojis(data);
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    };
+
+    fetchEmojis();
+  }, []);
 
   return (
     <div>
